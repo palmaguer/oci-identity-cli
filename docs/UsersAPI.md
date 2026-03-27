@@ -1,68 +1,65 @@
-# Users API Documentation
-
-The **Users API** in Oracle Identity Cloud provides functionality for managing users. This API includes capabilities to search, create, update, and delete users, along with retrieving user details by ID.
-
-## Features:
-
-- **Search Users**: Query users with filters, pagination, and sorting.
-- **Create User**: Add a new user to the system.
-- **Retrieve User by ID**: Fetch a user's details using their unique identifier.
-- **Delete User**: Remove a user from the system.
+Certainly! Here’s an enhanced, comprehensive Users API documentation with clearly structured Bash CLI usage included. This version follows the style of the previously enhanced documentation:
 
 ---
 
-## Methods:
+# Users API Documentation
 
-### 1. **Search Users**
+The **Users API** provides robust user management for Oracle Identity Cloud. This API lets you search, create, retrieve, and delete user accounts, as well as fetch detailed user information by ID.
 
-Search for users using various query options such as filters, pagination, and sorting.
+---
 
-#### Method:
+## Features
 
+- **Search Users:** Filter, paginate, and sort users.
+- **Create User:** Add a new user to the system.
+- **Retrieve User by ID:** Fetch a user's details via their unique identifier.
+- **Delete User:** Remove a user from the system.
+
+---
+
+## Methods
+
+### 1. Search Users
+
+Search for users using various query options such as filtering, pagination, and sorting.
+
+**Signature:**
 ```javascript
 async search(queryParams = {})
 ```
 
-#### Parameters:
+#### Parameters
 
-- **`filter`** (optional): SCIM filter to filter users based on specific attributes.
-- **`attributes`** (optional): A comma-separated string specifying the attributes to return in the response.
-- **`count`** (optional): Maximum number of results per page (default 100, maximum 1000).
-- **`sortBy`** (optional): Attribute to sort the results by.
-- **`sortOrder`** (optional): Order of sorting (`ascending` or `descending`).
-- **`startIndex`** (optional): Index of the first result for pagination.
+- `filter` (optional): SCIM filter string (e.g., `"userName co 'doe'"`)
+- `attributes` (optional): Comma-separated attributes to return
+- `count` (optional): Max results per page (default 100, max 1000)
+- `sortBy` (optional): Attribute to sort by
+- `sortOrder` (optional): `ascending` or `descending`
+- `startIndex` (optional): Pagination offset
 
-#### Example Usage:
-
+**Example (JavaScript):**
 ```javascript
-const queryParams = {
+const users = await usersApi.search({
   filter: "displayName eq 'John'",
   attributes: "id,displayName",
   count: 100,
   sortBy: "displayName",
   sortOrder: "ascending"
-};
-const users = await usersApi.search(queryParams);
+});
 ```
 
 ---
 
-### 2. **Get User by ID**
+### 2. Get User by ID
 
-Retrieve a user's details by their unique identifier.
+Retrieve details for a user by their unique ID.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async getUserById(userId)
 ```
 
-#### Parameters:
-
-- **`userId`**: The unique identifier of the user.
-
-#### Example Usage:
-
+**Example (JavaScript):**
 ```javascript
 const user = await usersApi.getUserById("userId123");
 console.log(user);
@@ -70,37 +67,22 @@ console.log(user);
 
 ---
 
-### 3. **Create User**
+### 3. Create User
 
-Create a new user in the Oracle Identity Cloud.
+Add a new user to Oracle Identity Cloud.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async createUser(data)
 ```
 
-#### Parameters:
-
-- **`data`**: An object containing the user details. The `userName` and `emails` attributes are required.
-
-#### Example Usage:
-
+**Example (JavaScript):**
 ```javascript
 const userData = {
   schemas: ["urn:ietf:params:scim:schemas:core:2.0:User"],
   userName: "johndoe",
-  name: {
-    givenName: "John",
-    familyName: "Doe"
-  },
-  emails: [
-    {
-      value: "johndoe@example.com",
-      type: "work",
-      primary: true
-    }
-  ],
+  name: { givenName: "John", familyName: "Doe" },
+  emails: [{ value: "johndoe@example.com", type: "work", primary: true }],
   active: true
 };
 const newUser = await usersApi.createUser(userData);
@@ -109,22 +91,16 @@ console.log(newUser);
 
 ---
 
-### 4. **Delete User**
+### 4. Delete User
 
-Delete a user by their unique identifier.
+Remove a user from the system by ID.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async deleteUser(userId)
 ```
 
-#### Parameters:
-
-- **`userId`**: The unique identifier of the user.
-
-#### Example Usage:
-
+**Example (JavaScript):**
 ```javascript
 await usersApi.deleteUser("userId123");
 console.log("User deleted successfully");
@@ -132,37 +108,133 @@ console.log("User deleted successfully");
 
 ---
 
-### SCIM Filter Examples:
+### SCIM Filter Examples
 
-Here are some example filters that can be used with the **`search`** method:
+Some filters supported by the **search** method:
 
-- **`displayName eq 'John'`**: Search for users with a display name of "John".
-- **`userName co 'doe'`**: Search for users whose usernames contain "doe".
-- **`emails.value eq 'johndoe@example.com'`**: Search for users with the specified email.
-- **`meta.lastModified gt '2024-01-01T00:00:00Z'`**: Search for users whose details were modified after the specified date.
+- `displayName eq 'John'` — Users with display name "John"
+- `userName co 'doe'` — Users whose usernames contain "doe"
+- `emails.value eq 'johndoe@example.com'` — Users with specific email
+- `meta.lastModified gt '2024-01-01T00:00:00Z'` — Users modified after a certain date
 
-> See [*SCIM Specification*](./SCIM.md) for more details.
-
----
-
-## Release Notes:
-
-This release introduces comprehensive user management functionality in Oracle Identity Cloud, including the ability to search, create, retrieve, and delete users.
-
-### New Features:
-
-- **User Search**: Search users using advanced SCIM filtering, pagination, and sorting options.
-- **User Creation**: Create new users with detailed attributes such as `userName`, `emails`, and more.
-- **User Deletion**: Remove users by their unique identifier.
-- **Query Optimization**: Use query parameters to limit the response size by selecting specific attributes.
-
-### Example Use Cases:
-
-- **Create a new user** with details like name, email, and status.
-- **Search for users** using advanced SCIM filters and pagination.
-- **Retrieve user details** by their ID.
-- **Delete users** when they are no longer needed in the system.
+_Refer to the [SCIM specification](./SCIM.md) for more._
 
 ---
 
-This documentation provides a detailed overview of the **Users API** and can be used as part of the release notes or project documentation for the new GitHub release.
+## Bash Usage Examples
+
+All CLI commands require the `--envfile` flag, pointing to your environment file for authentication.
+
+### Search Users
+
+Search users by display name:
+```bash
+oci-identity user-search --envfile ./path/to/envfile.env --filter "displayName eq 'John'"
+```
+
+Search users whose username contains “doe”:
+```bash
+oci-identity user-search --envfile ./path/to/envfile.env --filter "userName co 'doe'"
+```
+
+Search for a user by email:
+```bash
+oci-identity user-search --envfile ./path/to/envfile.env --filter "emails.value eq 'johndoe@example.com'"
+```
+
+With pagination and sorting:
+```bash
+oci-identity user-search --envfile ./path/to/envfile.env --count 50 --sortBy displayName --sortOrder ascending
+```
+
+---
+
+### Retrieve User by ID
+
+Get details for a user:
+```bash
+oci-identity user-get --envfile ./path/to/envfile.env --userId userId123
+```
+
+Get only specific attributes:
+```bash
+oci-identity user-get --envfile ./path/to/envfile.env --userId userId123 --attributes id,userName,emails
+```
+
+---
+
+### Create User
+
+Create a user with required details:
+```bash
+oci-identity user-create \
+  --envfile ./path/to/envfile.env \
+  --userName johndoe \
+  --firstName John \
+  --lastName Doe \
+  --email johndoe@example.com \
+  --active true
+```
+
+Create a user with additional options (e.g., primary/work email):
+```bash
+oci-identity user-create \
+  --envfile ./path/to/envfile.env \
+  --userName janedoe \
+  --firstName Jane \
+  --lastName Doe \
+  --email janedoe@example.com \
+  --emailType work \
+  --emailPrimary true \
+  --active true
+```
+
+---
+
+### Delete User
+
+Delete a user by ID:
+```bash
+oci-identity user-delete --envfile ./path/to/envfile.env --userId userId123
+```
+
+---
+
+### Advanced Filtering
+
+Find users modified after a certain date:
+```bash
+oci-identity user-search --envfile ./path/to/envfile.env --filter "meta.lastModified gt '2024-01-01T00:00:00Z'"
+```
+
+---
+
+### Notes
+
+- Replace `userId123`, `johndoe@example.com`, etc., with actual user data.
+- For help and more options:
+  ```bash
+  oci-identity --help
+  oci-identity user-<command> --help
+  ```
+- CLI commands can be used interactively or as part of automation scripts in CI/CD workflows.
+
+---
+
+## Release Notes
+
+This Users API release provides:
+
+- **Advanced User Search:** SCIM filters with pagination and sorting
+- **User Creation:** Specify common and custom attributes
+- **User Deletion:** Remove users by their unique IDs
+- **Selective Querying:** Optimize responses by returning specific attributes
+
+---
+
+**Example Use Cases**
+
+- Create a new user with details like name, email, and active status.
+- Efficiently search for users via advanced SCIM filters.
+- Retrieve all or some user details by user ID.
+- Remove users as part of deprovisioning or automation flows.

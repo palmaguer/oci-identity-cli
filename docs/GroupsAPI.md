@@ -1,223 +1,173 @@
 # Groups API Documentation
 
-The **Groups API** provides functionality for managing groups in Oracle Identity Cloud. This release includes the ability to search, create, update, and delete groups, as well as manage group members.
-
-## Features:
-
-- **Search Groups**: Query groups using filters, pagination, and sorting.
-- **Create Group**: Create a new group.
-- **Update Group**: Modify an existing group, including updating its members.
-- **Delete Group**: Remove a group by its ID.
-- **Manage Group Members**: Add or remove members from a group.
-- **Retrieve Group Members**: Get the list of members associated with a specific group.
+The **Groups API** enables you to manage groups in Oracle Identity Cloud, including searching, creating, updating, deleting, and managing group memberships.
 
 ---
 
-## Methods:
+## Features
 
-### 1. **Search Groups**
+- **Search Groups**: Query groups using filters, pagination, and sorting.
+- **Create Group**: Create new groups with specified attributes and optional members.
+- **Update Group**: Modify group details or members using SCIM-compliant PATCH operations.
+- **Delete Group**: Remove a group by its unique identifier.
+- **Manage Group Members**: Add or remove members from a group.
+- **Retrieve Group Members**: Fetch the list of all members in a specific group.
 
-Search for groups using various criteria like filters, pagination, and sorting.
+---
 
-#### Method:
+## Methods
 
+### 1. Search Groups
+
+Query groups with advanced filtering, pagination, and sorting.
+
+**Signature:**
 ```javascript
 async search(queryParams = {})
 ```
 
-#### Parameters:
+- `filter` (optional): SCIM filter (e.g., `displayName eq 'Developers'`)
+- `attributes` (optional): CSV list of attributes to return.
+- `count` (optional): Max results per page (default 100, max 1000).
+- `sortBy` (optional): Attribute to sort by.
+- `sortOrder` (optional): `ascending` or `descending`.
+- `startIndex` (optional): Offset for pagination.
 
-- **`filter`** (optional): SCIM filter to filter groups based on specific attributes.
-- **`attributes`** (optional): A comma-separated string specifying the attributes to be returned.
-- **`count`** (optional): Maximum number of results per page (default 100, maximum 1000).
-- **`sortBy`** (optional): Attribute to sort the results by.
-- **`sortOrder`** (optional): Order of sorting (`ascending` or `descending`).
-- **`startIndex`** (optional): Index of the first result (used for pagination).
-
-#### Example Usage:
-
+**Example:**
 ```javascript
-const queryParams = {
+const groups = await groupsApi.search({
   filter: "displayName eq 'Developers'",
   attributes: "id,displayName",
   count: 100,
   sortBy: "displayName",
   sortOrder: "ascending"
-};
-const groups = await groupsApi.search(queryParams);
+});
 ```
 
 ---
 
-### 2. **Create Group**
+### 2. Create Group
 
-Create a new group in Oracle Identity Cloud.
+Create a new group.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async createGroup(groupData)
 ```
 
-#### Parameters:
+- `groupData`: Object containing group details. `displayName` is required.
 
-- **`groupData`**: An object containing the group details. The `displayName` is required.
-
-#### Example Usage:
-
+**Example:**
 ```javascript
-const groupData = {
+const newGroup = await groupsApi.createGroup({
   schemas: ["urn:ietf:params:scim:schemas:core:2.0:Group"],
   displayName: "New Group",
-  members: [
-    { value: "userId1", type: "User" }
-  ]
-};
-const newGroup = await groupsApi.createGroup(groupData);
+  members: [{ value: "userId1", type: "User" }]
+});
 ```
 
 ---
 
-### 3. **Update Group**
+### 3. Update Group
 
-Update an existing group. Supports adding or removing members, or modifying group details.
+Update an existing group's attributes or members.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async patchGroup(groupId, payload)
 ```
 
-#### Parameters:
+- `groupId`: The group's unique ID.
+- `payload`: SCIM PATCH payload.
 
-- **`groupId`**: The ID of the group to update.
-- **`payload`**: The SCIM payload for patch operations.
-
-#### Example Usage:
-
+**Example:**
 ```javascript
-const payload = {
+await groupsApi.patchGroup("groupId123", {
   schemas: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
-  Operations: [
-    {
-      op: "replace",
-      path: "displayName",
-      value: "Updated Group Name"
-    }
-  ]
-};
-await groupsApi.patchGroup("groupId123", payload);
+  Operations: [{
+    op: "replace",
+    path: "displayName",
+    value: "Updated Group Name"
+  }]
+});
 ```
 
 ---
 
-### 4. **Delete Group**
+### 4. Delete Group
 
-Delete a group by its ID.
+Delete a group by ID.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async deleteGroup(groupId)
 ```
 
-#### Parameters:
-
-- **`groupId`**: The ID of the group to delete.
-
-#### Example Usage:
-
+**Example:**
 ```javascript
 await groupsApi.deleteGroup("groupId123");
 ```
 
 ---
 
-### 5. **Add Group Members**
+### 5. Add Group Members
 
-Add members to a group.
+Add one or more members to a group.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async patchGroup(groupId, payload)
 ```
 
-#### Parameters:
-
-- **`groupId`**: The ID of the group to update.
-- **`payload`**: The SCIM payload to add members.
-
-#### Example Usage:
-
+**Example:**
 ```javascript
-const payload = {
+await groupsApi.patchGroup("groupId123", {
   schemas: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
-  Operations: [
-    {
-      op: "add",
-      path: "members",
-      value: [
-        { value: "userId1", type: "User" },
-        { value: "userId2", type: "User" }
-      ]
-    }
-  ]
-};
-await groupsApi.patchGroup("groupId123", payload);
+  Operations: [{
+    op: "add",
+    path: "members",
+    value: [
+      { value: "userId1", type: "User" },
+      { value: "userId2", type: "User" }
+    ]
+  }]
+});
 ```
 
 ---
 
-### 6. **Remove Group Members**
+### 6. Remove Group Members
 
-Remove members from a group.
+Remove one or more members from a group.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async patchGroup(groupId, payload)
 ```
 
-#### Parameters:
-
-- **`groupId`**: The ID of the group to update.
-- **`payload`**: The SCIM payload to remove members.
-
-#### Example Usage:
-
+**Example:**
 ```javascript
-const payload = {
+await groupsApi.patchGroup("groupId123", {
   schemas: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
-  Operations: [
-    {
-      op: "remove",
-      path: "members[value eq 'userId1']"
-    }
-  ]
-};
-await groupsApi.patchGroup("groupId123", payload);
+  Operations: [{
+    op: "remove",
+    path: "members[value eq 'userId1']"
+  }]
+});
 ```
 
 ---
 
-### 7. **Get Group Members**
+### 7. Get Group Members
 
-Retrieve members of a specific group.
+Retrieve a group's details and member list.
 
-#### Method:
-
+**Signature:**
 ```javascript
 async getGroupById(groupId, queryParams)
 ```
 
-#### Parameters:
-
-- **`groupId`**: The ID of the group.
-- **`queryParams`** (optional): An object specifying which attributes to retrieve (e.g., `"attributes=members,displayName"`).
-
-#### Example Usage:
-
+**Example:**
 ```javascript
 const group = await groupsApi.getGroupById("groupId123", { attributes: "members,displayName" });
 console.log(group.members);
@@ -225,36 +175,146 @@ console.log(group.members);
 
 ---
 
-### SCIM Filter Examples:
+### SCIM Filter Examples
 
-Here are some example filters that can be used with the **`search`** method:
+Sample SCIM filters for querying groups:
 
-- **`displayName eq 'Developers'`**: Search for groups with a specific displayName.
-- **`displayName co 'Admin'`**: Search for groups whose displayName contains the word "Admin".
-- **`id eq '0123456789'`**: Search for a group by its ID.
+- `displayName eq 'Developers'` - Exact name match
+- `displayName co 'Admin'`      - Name contains "Admin"
+- `id eq '0123456789'`          - Find by specific group ID
 
-> See [*SCIM Specification*](./SCIM.md) for more details.
-
----
-
-## Release Notes:
-
-This release brings full support for managing groups and group members, including search functionality with flexible filtering, sorting, and pagination options.
-
-### New Features:
-
-- **Group Search**: Search for groups with advanced filtering, pagination, and sorting options.
-- **Group Management**: Create, update, and delete groups.
-- **Group Membership Management**: Add or remove members from a group.
-- **Query Optimization**: Limit the attributes returned by using the `attributes` query parameter.
-
-### Example Use Cases:
-
-- **Create a new group** and add members.
-- **Search for groups** using SCIM filters with pagination.
-- **Update group details** or **modify group members** using the PATCH operation.
-- **Delete groups** no longer in use.
+Refer to the [SCIM specification](./SCIM.md) for more options.
 
 ---
 
-This documentation can be used as the **description** for your **GitHub release**, and it provides a solid foundation for users to understand the new features and functionality available in the **Groups API**.
+Certainly! Here’s an extension of your Groups API documentation with practical Bash CLI usage examples (assuming your CLI tool provides group management commands like `group-search`, `group-create`, etc., similar to your `oci-identity` usage):
+
+---
+
+## Bash Usage Examples
+
+All commands require the path to your environment variables file via `--envfile` for authentication.
+
+### 1. Search Groups
+
+Search by group display name:
+
+```bash
+oci-identity group-search --envfile ./path/to/envfile.env --filter "displayName eq 'Developers'"
+```
+
+Search by partial display name (groups containing "Admin"):
+
+```bash
+oci-identity group-search --envfile ./path/to/envfile.env --filter "displayName co 'Admin'"
+```
+
+Pagination and sorting:
+
+```bash
+oci-identity group-search --envfile ./path/to/envfile.env --count 50 --sortBy displayName --sortOrder ascending
+```
+
+---
+
+### 2. Create Group
+
+Create a group called "New Group":
+
+```bash
+oci-identity group-create --envfile ./path/to/envfile.env --displayName "New Group"
+```
+
+Create a group with initial members (space-separated user IDs):
+
+```bash
+oci-identity group-create --envfile ./path/to/envfile.env --displayName "Engineering" --members userId1 userId2
+```
+
+---
+
+### 3. Update Group
+
+Rename a group:
+
+```bash
+oci-identity group-update --envfile ./path/to/envfile.env --groupId <group_id> --displayName "Updated Group Name"
+```
+
+---
+
+### 4. Delete Group
+
+Delete a group by ID:
+
+```bash
+oci-identity group-delete --envfile ./path/to/envfile.env --groupId <group_id>
+```
+
+---
+
+### 5. Add Group Members
+
+Add multiple members to a group:
+
+```bash
+oci-identity group-add-members --envfile ./path/to/envfile.env --groupId <group_id> --members userId1 userId2
+```
+
+---
+
+### 6. Remove Group Members
+
+Remove a member from a group:
+
+```bash
+oci-identity group-remove-members --envfile ./path/to/envfile.env --groupId <group_id> --members userId1
+```
+
+---
+
+### 7. Retrieve Group Members
+
+Get all members of a group:
+
+```bash
+oci-identity group-get --envfile ./path/to/envfile.env --groupId <group_id> --attributes members,displayName
+```
+
+---
+
+### General Notes
+
+- Replace `<group_id>`, `userId1`, and `userId2` with actual group and user identifiers.
+- For more options and details, run:
+  ```bash
+  oci-identity --help
+  oci-identity group-<command> --help
+  ```
+
+---
+
+This section demonstrates how to use the CLI tool for group management tasks directly from your terminal or in automation scripts. Adjust flag and option names as needed to match your CLI’s actual implementation.
+
+
+---
+
+## Release Notes
+
+This release supports:
+
+- Flexible group search with filtering, sorting, and pagination
+- Group creation, update, and deletion
+- Group membership management
+- Attribute selection for optimized results
+
+**Example Use Cases:**
+
+- Create a new group and add members at creation.
+- Search for groups using sophisticated SCIM filters.
+- Update group details or batch manage group members.
+- Delete unused groups.
+
+---
+
+For further details, consult the official API references or the [SCIM specification](./SCIM.md).
